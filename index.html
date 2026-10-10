@@ -253,6 +253,112 @@
       line-height: 1.35;
       pointer-events: none;
     }
+    .video-list { display: grid; grid-template-columns: minmax(0, 860px); }
+    .video-card {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(214, 166, 93, .3);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 72% 28%, rgba(214, 166, 93, .18), transparent 24%),
+        linear-gradient(135deg, #292521 0%, #17181a 48%, #090a0b 100%);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
+    }
+    .video-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, .035) 18.5%, transparent 19%),
+        linear-gradient(180deg, transparent 48%, rgba(5, 5, 6, .8) 100%);
+    }
+    .video-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: clamp(66px, 8vw, 86px);
+      height: clamp(66px, 8vw, 86px);
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(234, 209, 170, .7);
+      border-radius: 50%;
+      background: rgba(13, 14, 15, .72);
+      transition: background .25s ease, border-color .25s ease;
+    }
+    .video-play::after {
+      content: "";
+      width: 0;
+      height: 0;
+      margin-left: 6px;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      border-left: 18px solid var(--gold-soft);
+    }
+    .video-card:hover .video-play, .video-card:focus-visible .video-play {
+      border-color: var(--gold);
+      background: rgba(214, 166, 93, .2);
+    }
+    .video-card-copy {
+      position: absolute;
+      z-index: 1;
+      left: clamp(20px, 4vw, 38px);
+      right: 20px;
+      bottom: clamp(18px, 3vw, 32px);
+    }
+    .video-card-copy strong {
+      display: block;
+      font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+      line-height: 1.2;
+    }
+    .video-card-copy span {
+      display: block;
+      margin-top: 5px;
+      color: var(--gold-soft);
+      font-size: clamp(.78rem, 1.5vw, .95rem);
+    }
+    .video-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      place-items: center;
+      padding: clamp(18px, 4vw, 52px);
+      background: rgba(5, 5, 6, .96);
+    }
+    .video-lightbox.open { display: grid; }
+    .video-player-shell { width: min(1120px, 100%); }
+    .video-player-shell video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, .58);
+    }
+    .video-lightbox-label {
+      margin: 0 54px 14px 0;
+      color: var(--gold-soft);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 600;
+    }
+    .video-lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      background: #17181a;
+      color: var(--text);
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
     .library-callout {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -578,6 +684,21 @@
       </div>
     </section>
 
+    <section id="videos">
+      <div class="wrap">
+        <div class="section-head">
+          <div><span class="section-label">SELECTED VIDEO</span><h2>精选视频</h2></div>
+          <p>一键播放代表作正片片段</p>
+        </div>
+        <div class="video-list">
+          <button class="video-card" id="jinglingVideoCard" type="button" aria-haspopup="dialog" aria-controls="videoLightbox" aria-label="播放《精灵小样》">
+            <span class="video-play" aria-hidden="true"></span>
+            <span class="video-card-copy"><strong>精灵小样</strong><span>奇幻题材 AI 短剧小样 · 约 1 分 37 秒</span></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <section id="library">
       <div class="wrap">
         <div class="library-callout">
@@ -675,6 +796,17 @@
     <img id="lightboxImage" src="assets/img-02.jpeg" alt="放大的作品画面">
   </div>
 
+  <div class="video-lightbox" id="videoLightbox" role="dialog" aria-modal="true" aria-labelledby="videoLightboxLabel" aria-hidden="true">
+    <button class="video-lightbox-close" id="videoLightboxClose" type="button" aria-label="关闭视频播放器">×</button>
+    <div class="video-player-shell">
+      <p class="video-lightbox-label" id="videoLightboxLabel">精灵小样</p>
+      <video id="jinglingVideo" controls playsinline preload="metadata">
+        <source src="https://17698256917-blip.github.io/huangjingya-portfolio/videos/jingling-preview.mp4" type="video/mp4">
+        你的浏览器暂不支持视频播放。
+      </video>
+    </div>
+  </div>
+
   <script>
     (function () {
       var lightbox = document.getElementById('lightbox');
@@ -682,6 +814,10 @@
       var lightboxLabel = document.getElementById('lightboxLabel');
       var closeButton = document.getElementById('lightboxClose');
       var lastTrigger = null;
+      var videoCard = document.getElementById('jinglingVideoCard');
+      var videoLightbox = document.getElementById('videoLightbox');
+      var videoCloseButton = document.getElementById('videoLightboxClose');
+      var jinglingVideo = document.getElementById('jinglingVideo');
 
       function openLightbox(button) {
         lastTrigger = button;
@@ -698,6 +834,23 @@
         lightbox.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         if (lastTrigger) lastTrigger.focus();
+      }
+
+      function openVideoLightbox() {
+        videoLightbox.classList.add('open');
+        videoLightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        videoCloseButton.focus();
+        var playPromise = jinglingVideo.play();
+        if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(function () {});
+      }
+
+      function closeVideoLightbox() {
+        jinglingVideo.pause();
+        videoLightbox.classList.remove('open');
+        videoLightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        videoCard.focus();
       }
 
       var marquee = document.getElementById('worksMarquee');
@@ -785,8 +938,15 @@
       lightbox.addEventListener('click', function (event) {
         if (event.target === lightbox) closeLightbox();
       });
+      videoCard.addEventListener('click', openVideoLightbox);
+      videoCloseButton.addEventListener('click', closeVideoLightbox);
+      videoLightbox.addEventListener('click', function (event) {
+        if (event.target === videoLightbox) closeVideoLightbox();
+      });
       document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+        if (event.key !== 'Escape') return;
+        if (videoLightbox.classList.contains('open')) closeVideoLightbox();
+        else if (lightbox.classList.contains('open')) closeLightbox();
       });
 
       var copyButton = document.getElementById('copyEmail');
