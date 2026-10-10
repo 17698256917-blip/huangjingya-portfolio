@@ -199,6 +199,8 @@
       user-select: none;
       scrollbar-width: none;
       overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      contain: layout paint;
     }
     .marquee-viewport::-webkit-scrollbar { display: none; }
     .marquee-viewport.dragging { cursor: grabbing; }
@@ -253,10 +255,10 @@
       line-height: 1.35;
       pointer-events: none;
     }
-    .video-list { display: grid; grid-template-columns: minmax(0, 860px); }
+    .video-list { display: grid; grid-template-columns: minmax(0, 414px); }
     .video-card {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 414 / 720;
       position: relative;
       padding: 0;
       overflow: hidden;
@@ -333,11 +335,14 @@
       background: rgba(5, 5, 6, .96);
     }
     .video-lightbox.open { display: grid; }
-    .video-player-shell { width: min(1120px, 100%); }
+    .video-player-shell {
+      width: min(414px, 100%, calc((100svh - 108px) * .575));
+    }
     .video-player-shell video {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 414 / 720;
+      object-fit: contain;
       background: #000;
       box-shadow: 0 28px 70px rgba(0, 0, 0, .58);
     }
@@ -370,45 +375,6 @@
     }
     .library-callout h2 { font-size: clamp(2.4rem, 5vw, 4.7rem); }
     .library-callout p { margin: 13px 0 0; color: var(--muted); }
-    .library-wall {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: clamp(18px, 2.7vw, 34px);
-      margin-top: clamp(28px, 4vw, 50px);
-    }
-    .library-still {
-      position: relative;
-      padding: 0;
-      border: 0;
-      border-radius: 24px;
-      background: var(--surface-deep);
-      color: var(--text);
-      cursor: zoom-in;
-      overflow: hidden;
-      text-align: left;
-      box-shadow: 0 16px 32px rgba(0, 0, 0, .2);
-    }
-    .library-still img {
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      object-fit: cover;
-      pointer-events: none;
-      transition: filter .3s ease;
-    }
-    .library-still:hover img, .library-still:focus-visible img { filter: brightness(.82); }
-    .library-still span {
-      position: absolute;
-      left: 14px;
-      bottom: 14px;
-      padding: 6px 10px;
-      background: rgba(16, 17, 19, .86);
-      color: var(--gold-soft);
-      font-family: var(--font-en);
-      font-size: .75rem;
-      font-weight: 600;
-      letter-spacing: .05em;
-      pointer-events: none;
-    }
     .button {
       min-height: 50px;
       display: inline-flex;
@@ -586,10 +552,18 @@
       .marquee-viewport { padding-block: 44px; }
       .marquee-set { gap: 24px; padding-right: 24px; }
       .still { flex-basis: 190px; width: 190px; border-radius: 24px; }
-      .library-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .case-layout, .about-grid, .contact .wrap { grid-template-columns: 1fr; }
       .case-summary { position: static; }
       .portrait-type { max-width: 470px; }
+    }
+    @media (hover: none) and (pointer: coarse) {
+      .still,
+      .still img,
+      .video-play { transition: none; }
+      .still:hover,
+      .still:focus-visible { transform: none; }
+      .still:hover img,
+      .still:focus-visible img { filter: none; }
     }
     @media (max-width: 560px) {
       .wrap, .hero-copy { width: min(100% - 32px, 1240px); }
@@ -608,9 +582,17 @@
         -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
         mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
       }
-      .marquee-viewport { padding-block: 35px; }
+      .marquee-viewport { padding-block: 28px; }
       .marquee-set { gap: 18px; padding-right: 18px; }
-      .still { flex-basis: 154px; width: 154px; border-radius: 21px; }
+      .still {
+        flex-basis: 154px;
+        width: 154px;
+        border-radius: 21px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, .2);
+      }
+      .video-list { justify-content: center; }
+      .video-lightbox { padding: 12px; }
+      .video-lightbox-label { margin-right: 48px; }
       .library-callout { grid-template-columns: 1fr; align-items: start; }
       .library-callout .button { justify-self: start; }
       .workflow-grid { grid-template-columns: 1fr; }
@@ -704,17 +686,6 @@
         <div class="library-callout">
           <div><span class="section-label">FULL LIBRARY</span><h2>完整作品库</h2><p>更多作品陆续上传</p></div>
           <button class="button" type="button" disabled>敬请期待</button>
-        </div>
-        <div class="library-wall" aria-label="剧集画面墙">
-          <button class="library-still" type="button" data-src="assets/img-08.jpeg" data-label="EP01" aria-label="放大查看 EP01 剧集画面"><img src="assets/img-08.jpeg" alt="EP01 剧集画面：医院中老人照顾男孩" loading="lazy"><span>EP01</span></button>
-          <button class="library-still" type="button" data-src="assets/img-09.jpeg" data-label="EP02" aria-label="放大查看 EP02 剧集画面"><img src="assets/img-09.jpeg" alt="EP02 剧集画面" loading="lazy"><span>EP02</span></button>
-          <button class="library-still" type="button" data-src="assets/img-10.jpeg" data-label="EP03" aria-label="放大查看 EP03 剧集画面"><img src="assets/img-10.jpeg" alt="EP03 剧集画面" loading="lazy"><span>EP03</span></button>
-          <button class="library-still" type="button" data-src="assets/img-11.jpeg" data-label="EP04" aria-label="放大查看 EP04 剧集画面"><img src="assets/img-11.jpeg" alt="EP04 剧集画面" loading="lazy"><span>EP04</span></button>
-          <button class="library-still" type="button" data-src="assets/img-12.jpeg" data-label="EP05" aria-label="放大查看 EP05 剧集画面"><img src="assets/img-12.jpeg" alt="EP05 剧集画面：医院走廊中的老人和男孩" loading="lazy"><span>EP05</span></button>
-          <button class="library-still" type="button" data-src="assets/img-13.jpeg" data-label="EP06" aria-label="放大查看 EP06 剧集画面"><img src="assets/img-13.jpeg" alt="EP06 剧集画面" loading="lazy"><span>EP06</span></button>
-          <button class="library-still" type="button" data-src="assets/img-14.jpeg" data-label="EP07" aria-label="放大查看 EP07 剧集画面"><img src="assets/img-14.jpeg" alt="EP07 剧集画面" loading="lazy"><span>EP07</span></button>
-          <button class="library-still" type="button" data-src="assets/img-15.jpeg" data-label="EP09" aria-label="放大查看 EP09 剧集画面"><img src="assets/img-15.jpeg" alt="EP09 剧集画面" loading="lazy"><span>EP09</span></button>
-          <button class="library-still" type="button" data-src="assets/img-16.jpeg" data-label="EP10" aria-label="放大查看 EP10 剧集画面"><img src="assets/img-16.jpeg" alt="EP10 剧集画面：医院中的女医生" loading="lazy"><span>EP10</span></button>
         </div>
       </div>
     </section>
@@ -864,6 +835,7 @@
       var dragMoved = false;
       var suppressClickUntil = 0;
       var lastFrame = performance.now();
+      var marqueeVisible = true;
 
       function measureMarquee() {
         setWidth = marqueeSet.getBoundingClientRect().width || 1;
@@ -877,7 +849,7 @@
       function animateMarquee(now) {
         var elapsed = Math.min(now - lastFrame, 50);
         lastFrame = now;
-        if (!dragging && !reduceMotion) {
+        if (!dragging && !reduceMotion && marqueeVisible && !document.hidden) {
           marquee.scrollLeft += elapsed * 0.05;
           normalizeScroll();
         }
@@ -921,8 +893,17 @@
         measureMarquee();
         normalizeScroll();
       });
+      document.addEventListener('visibilitychange', function () {
+        lastFrame = performance.now();
+      });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          marqueeVisible = entries[0].isIntersecting;
+          lastFrame = performance.now();
+        }, { rootMargin: '120px 0px' }).observe(marquee);
+      }
 
-      Array.prototype.forEach.call(document.querySelectorAll('.still, .library-still'), function (button) {
+      Array.prototype.forEach.call(document.querySelectorAll('.still'), function (button) {
         button.addEventListener('click', function (event) {
           if (event.detail > 0 && Date.now() < suppressClickUntil) {
             event.preventDefault();
