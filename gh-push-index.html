@@ -1,0 +1,949 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="黄经亚（Huang Jingya）的 AI 影视创作作品展厅。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>黄经亚（Huang Jingya）｜AI Filmmaker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101113;
+      --surface: #242426;
+      --surface-deep: #18191b;
+      --gold: #D6A65D;
+      --gold-soft: #ead1aa;
+      --text: #F3EFE7;
+      --muted: #aaa59d;
+      --line: rgba(243, 239, 231, .15);
+      --font-cn: "Noto Sans SC", sans-serif;
+      --font-en: "Space Grotesk", sans-serif;
+      --font-art: "Playfair Display", serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101113;
+        --surface: #242426;
+        --surface-deep: #18191b;
+        --text: #F3EFE7;
+        --muted: #aaa59d;
+        --line: rgba(243, 239, 231, .15);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      margin: 0;
+      min-width: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-cn);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    button, a { font: inherit; -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    .wrap { width: min(1240px, calc(100% - 64px)); margin-inline: auto; }
+    .jump-nav {
+      position: fixed;
+      z-index: 30;
+      top: 22px;
+      right: max(24px, calc((100vw - 1240px) / 2));
+      display: flex;
+      gap: 22px;
+      padding: 10px 16px;
+      border: 1px solid rgba(243, 239, 231, .17);
+      background: rgba(16, 17, 19, .78);
+      backdrop-filter: blur(10px);
+    }
+    .jump-nav a {
+      color: rgba(243, 239, 231, .74);
+      font-family: var(--font-en);
+      font-size: .76rem;
+      text-decoration: none;
+      letter-spacing: .02em;
+    }
+    .jump-nav a:hover, .jump-nav a:focus-visible { color: var(--gold); }
+    .hero { border-bottom: 1px solid var(--line); }
+    .hero-stage {
+      position: relative;
+      min-height: 100svh;
+      isolation: isolate;
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+    }
+    .hero-stage > img {
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+    .hero-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(90deg, rgba(10, 10, 11, .84) 0%, rgba(10, 10, 11, .53) 35%, rgba(10, 10, 11, .08) 71%),
+        linear-gradient(180deg, rgba(10, 10, 11, .50) 0%, transparent 42%, rgba(10, 10, 11, .55) 100%);
+    }
+    .hero-copy {
+      width: min(1240px, calc(100% - 64px));
+      margin: 0 auto;
+      padding-top: clamp(118px, 16vh, 180px);
+    }
+    .hero-kicker {
+      margin: 0 0 18px;
+      color: var(--gold-soft);
+      font-family: var(--font-en);
+      font-size: clamp(.85rem, 1.2vw, 1rem);
+      letter-spacing: .12em;
+    }
+    h1 {
+      max-width: 720px;
+      margin: 0;
+      font-family: var(--font-cn);
+      font-size: clamp(4rem, 9.2vw, 8.4rem);
+      font-weight: 700;
+      line-height: .94;
+      letter-spacing: .015em;
+      text-shadow: 0 3px 28px rgba(0, 0, 0, .4);
+    }
+    .hero-role {
+      margin: 27px 0 0;
+      color: var(--text);
+      font-size: clamp(1.06rem, 1.9vw, 1.45rem);
+      font-weight: 500;
+    }
+    .hero-role span { color: var(--gold); font-family: var(--font-en); }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1.15fr .75fr .75fr 1.7fr;
+      border-top: 1px solid var(--line);
+      background: #121315;
+    }
+    .stat {
+      min-height: 134px;
+      padding: 27px 30px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .stat:last-child { border-right: 0; }
+    .stat strong {
+      font-family: var(--font-en);
+      color: var(--gold);
+      font-size: clamp(1.6rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .stat span { color: var(--muted); font-size: .88rem; }
+    section { padding: clamp(76px, 9vw, 130px) 0; border-bottom: 1px solid var(--line); scroll-margin-top: 30px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      gap: 48px;
+      align-items: end;
+      margin-bottom: clamp(38px, 6vw, 70px);
+    }
+    .section-label {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--gold);
+      font-family: var(--font-en);
+      font-size: .75rem;
+      letter-spacing: .14em;
+    }
+    h2 {
+      margin: 0;
+      font-family: var(--font-art);
+      font-size: clamp(2.6rem, 5.6vw, 5.2rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -.035em;
+    }
+    .section-head p { margin: 0; color: var(--muted); }
+    .hero-name-en {
+      margin: 18px 0 0;
+      color: var(--gold-soft);
+      font-family: var(--font-en);
+      font-size: clamp(1rem, 1.8vw, 1.35rem);
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+    .marquee-shell {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+    }
+    .marquee-viewport {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 52px 0;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      contain: layout paint;
+    }
+    .marquee-viewport::-webkit-scrollbar { display: none; }
+    .marquee-viewport.dragging { cursor: grabbing; }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+    }
+    .marquee-set {
+      display: flex;
+      flex: none;
+      gap: 32px;
+      padding-right: 32px;
+    }
+    .still {
+      position: relative;
+      flex: 0 0 clamp(184px, 19vw, 238px);
+      width: clamp(184px, 19vw, 238px);
+      padding: 0;
+      border: 0;
+      border-radius: 28px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: zoom-in;
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 20px 38px rgba(0, 0, 0, .24);
+      transition: transform .35s cubic-bezier(.2, .75, .25, 1), box-shadow .35s ease;
+      transform-origin: center;
+    }
+    .still img {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      transition: filter .35s ease;
+    }
+    .still:hover, .still:focus-visible {
+      z-index: 2;
+      transform: scale(1.2);
+      box-shadow: 0 28px 54px rgba(0, 0, 0, .48);
+    }
+    .still:hover img, .still:focus-visible img { filter: brightness(.9); }
+    .still-label {
+      display: block;
+      min-height: 54px;
+      padding: 12px 15px 14px;
+      color: var(--text);
+      font-family: var(--font-en);
+      font-size: .76rem;
+      font-weight: 600;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+    .video-list { display: grid; grid-template-columns: minmax(0, 414px); }
+    .video-card {
+      width: 100%;
+      aspect-ratio: 414 / 720;
+      position: relative;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(214, 166, 93, .3);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 72% 28%, rgba(214, 166, 93, .18), transparent 24%),
+        linear-gradient(135deg, #292521 0%, #17181a 48%, #090a0b 100%);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
+    }
+    .video-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, .035) 18.5%, transparent 19%),
+        linear-gradient(180deg, transparent 48%, rgba(5, 5, 6, .8) 100%);
+    }
+    .video-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: clamp(66px, 8vw, 86px);
+      height: clamp(66px, 8vw, 86px);
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(234, 209, 170, .7);
+      border-radius: 50%;
+      background: rgba(13, 14, 15, .72);
+      transition: background .25s ease, border-color .25s ease;
+    }
+    .video-play::after {
+      content: "";
+      width: 0;
+      height: 0;
+      margin-left: 6px;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      border-left: 18px solid var(--gold-soft);
+    }
+    .video-card:hover .video-play, .video-card:focus-visible .video-play {
+      border-color: var(--gold);
+      background: rgba(214, 166, 93, .2);
+    }
+    .video-card-copy {
+      position: absolute;
+      z-index: 1;
+      left: clamp(20px, 4vw, 38px);
+      right: 20px;
+      bottom: clamp(18px, 3vw, 32px);
+    }
+    .video-card-copy strong {
+      display: block;
+      font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+      line-height: 1.2;
+    }
+    .video-card-copy span {
+      display: block;
+      margin-top: 5px;
+      color: var(--gold-soft);
+      font-size: clamp(.78rem, 1.5vw, .95rem);
+    }
+    .video-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      place-items: center;
+      padding: clamp(18px, 4vw, 52px);
+      background: rgba(5, 5, 6, .96);
+    }
+    .video-lightbox.open { display: grid; }
+    .video-player-shell {
+      width: min(414px, 100%, calc((100svh - 108px) * .575));
+    }
+    .video-player-shell video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 414 / 720;
+      object-fit: contain;
+      background: #000;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, .58);
+    }
+    .video-lightbox-label {
+      margin: 0 54px 14px 0;
+      color: var(--gold-soft);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 600;
+    }
+    .video-lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      background: #17181a;
+      color: var(--text);
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+    .library-callout {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 28px;
+      align-items: center;
+      padding: clamp(30px, 5vw, 64px);
+      background: var(--surface);
+      border-top: 3px solid var(--gold);
+    }
+    .library-callout h2 { font-size: clamp(2.4rem, 5vw, 4.7rem); }
+    .library-callout p { margin: 13px 0 0; color: var(--muted); }
+    .button {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 22px;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: #111214;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover, .button:focus-visible { background: var(--gold-soft); border-color: var(--gold-soft); }
+    .button[disabled] {
+      border-color: #59595b;
+      background: #3b3b3d;
+      color: #919193;
+      cursor: not-allowed;
+    }
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      padding: 1px;
+      background: var(--line);
+    }
+    .workflow-card {
+      min-height: 286px;
+      padding: clamp(28px, 4vw, 48px);
+      background: var(--surface-deep);
+      display: flex;
+      flex-direction: column;
+    }
+    .workflow-card .mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-en);
+      font-weight: 600;
+    }
+    .workflow-card h3 { margin: auto 0 14px; font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+    .workflow-card p { margin: 0; color: var(--muted); }
+    .case-layout {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: clamp(42px, 8vw, 110px);
+      align-items: start;
+    }
+    .case-summary {
+      position: sticky;
+      top: 30px;
+    }
+    .case-summary .case-number {
+      margin: 0 0 20px;
+      font-family: var(--font-en);
+      color: var(--gold);
+      font-size: clamp(3rem, 7vw, 6.6rem);
+      font-weight: 600;
+      line-height: .9;
+      letter-spacing: -.055em;
+    }
+    .case-summary h2 { font-size: clamp(2.4rem, 4.7vw, 4.4rem); }
+    .case-link { margin-top: 30px; }
+    .steps { border-top: 1px solid var(--gold); }
+    .step {
+      display: grid;
+      grid-template-columns: 68px 1fr;
+      gap: 22px;
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .step-index { color: var(--gold); font-family: var(--font-en); font-size: 1.1rem; }
+    .step h3 { margin: 0 0 7px; font-size: clamp(1.25rem, 2.4vw, 1.72rem); }
+    .step p { margin: 0; color: var(--muted); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap: clamp(50px, 10vw, 140px);
+      align-items: start;
+    }
+    .portrait-type {
+      aspect-ratio: 4 / 5;
+      padding: 34px;
+      background: var(--gold);
+      color: #111214;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .portrait-type strong {
+      font-family: var(--font-cn);
+      font-size: clamp(2.6rem, 5.6vw, 5.8rem);
+      line-height: .84;
+      letter-spacing: -.06em;
+    }
+    .portrait-type em { font-family: var(--font-art); font-size: 1.25rem; }
+    .about-copy h2 { margin-bottom: 9px; }
+    .about-copy > p { margin: 0 0 34px; color: var(--muted); font-size: 1.04rem; }
+    .about-copy .profile-name-en {
+      margin-bottom: 22px;
+      color: var(--gold-soft);
+      font-family: var(--font-en);
+      font-size: .95rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+    .bio-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+    .bio-list li { padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .bio-list strong { color: var(--gold); font-family: var(--font-en); }
+    .salary { margin-top: 25px !important; color: var(--text) !important; }
+    .contact {
+      background: var(--gold);
+      color: #111214;
+    }
+    .contact .wrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 50px; align-items: end; }
+    .contact .section-label { color: #111214; opacity: .72; }
+    .contact h2 { max-width: 780px; }
+    .contact-card { border-top: 2px solid #111214; padding-top: 22px; }
+    .contact-card p { margin: 0 0 7px; opacity: .7; }
+    .email { font-family: var(--font-en); font-weight: 600; font-size: clamp(1rem, 2vw, 1.35rem); overflow-wrap: anywhere; }
+    .contact-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+    .contact .button { background: #111214; border-color: #111214; color: var(--text); }
+    .contact .button.secondary { background: transparent; color: #111214; }
+    .contact .button:hover, .contact .button:focus-visible { background: var(--text); border-color: var(--text); color: #111214; }
+    .copy-status { min-height: 25px; margin-top: 9px; font-size: .85rem; }
+    footer { padding: 24px 0 34px; color: var(--muted); font-family: var(--font-en); font-size: .78rem; text-align: center; }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      background: rgba(5, 5, 6, .94);
+    }
+    .lightbox.open { display: grid; }
+    .lightbox img { max-width: min(90vw, 640px); max-height: 88svh; object-fit: contain; }
+    .lightbox-label { position: absolute; left: 24px; top: 20px; color: var(--gold); font-family: var(--font-en); font-weight: 700; }
+    .lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      background: #17181a;
+      color: var(--text);
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+    :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+    @media (max-width: 860px) {
+      .wrap, .hero-copy { width: min(100% - 40px, 1240px); }
+      .jump-nav { display: none; }
+      .hero-stage > img { object-position: 37% center; }
+      .hero-stage::before {
+        background:
+          linear-gradient(180deg, rgba(9, 9, 10, .77) 0%, rgba(9, 9, 10, .32) 47%, rgba(9, 9, 10, .72) 100%),
+          linear-gradient(90deg, rgba(9, 9, 10, .34), transparent 80%);
+      }
+      .hero-copy { padding-top: 72px; }
+      .hero-copy h1 { max-width: 520px; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .section-head { grid-template-columns: 1fr; gap: 18px; }
+      .marquee-viewport { padding-block: 44px; }
+      .marquee-set { gap: 24px; padding-right: 24px; }
+      .still { flex-basis: 190px; width: 190px; border-radius: 24px; }
+      .case-layout, .about-grid, .contact .wrap { grid-template-columns: 1fr; }
+      .case-summary { position: static; }
+      .portrait-type { max-width: 470px; }
+    }
+    @media (hover: none) and (pointer: coarse) {
+      .still,
+      .still img,
+      .video-play { transition: none; }
+      .still:hover,
+      .still:focus-visible { transform: none; }
+      .still:hover img,
+      .still:focus-visible img { filter: none; }
+    }
+    @media (max-width: 560px) {
+      .wrap, .hero-copy { width: min(100% - 32px, 1240px); }
+      .hero-stage { min-height: 100svh; }
+      .hero-stage > img { object-position: 35% center; }
+      .hero-copy { padding-top: 52px; }
+      h1 { font-size: clamp(3.25rem, 17vw, 5.2rem); max-width: 345px !important; }
+      .hero-role { max-width: 290px; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .stat { min-height: 104px; padding: 20px 18px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .stat:last-child { border-bottom: 0; }
+      section { padding-block: 68px; }
+      .marquee-shell {
+        width: calc(100% + 16px);
+        margin-left: -8px;
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+        mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+      }
+      .marquee-viewport { padding-block: 28px; }
+      .marquee-set { gap: 18px; padding-right: 18px; }
+      .still {
+        flex-basis: 154px;
+        width: 154px;
+        border-radius: 21px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, .2);
+      }
+      .video-list { justify-content: center; }
+      .video-lightbox { padding: 12px; }
+      .video-lightbox-label { margin-right: 48px; }
+      .library-callout { grid-template-columns: 1fr; align-items: start; }
+      .library-callout .button { justify-self: start; }
+      .workflow-grid { grid-template-columns: 1fr; }
+      .workflow-card { min-height: 240px; }
+      .step { grid-template-columns: 44px 1fr; gap: 12px; }
+      .portrait-type { aspect-ratio: 1 / 1.08; }
+      .contact-actions { flex-direction: column; }
+      .contact-actions .button { width: 100%; }
+      .lightbox { padding: 18px; }
+      .lightbox-label { left: 16px; top: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="jump-nav" aria-label="快速导航">
+    <a href="#works">WORKS</a>
+    <a href="#workflow">WORKFLOW</a>
+    <a href="#about">ABOUT</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+
+  <main>
+    <header class="hero" id="top">
+      <div class="hero-stage">
+        <img src="assets/img-00.png" alt="男性导演背影坐在导演椅上，面向奇幻城堡 LED 大屏、真实作品封面监视器与片场摄影设备">
+        <div class="hero-copy">
+          <p class="hero-kicker">AI FILMMAKER · VISUAL STORYTELLER</p>
+          <h1>黄经亚</h1>
+          <p class="hero-name-en">HUANG JINGYA</p>
+          <p class="hero-role">AI 短剧制作人 <span>/ AI Filmmaker</span></p>
+        </div>
+      </div>
+      <div class="hero-stats" aria-label="创作数据">
+        <div class="stat"><strong>200万</strong><span>TikTok 单账号播放</span></div>
+        <div class="stat"><strong>65</strong><span>支作品</span></div>
+        <div class="stat"><strong>9</strong><span>大品类</span></div>
+        <div class="stat"><strong>双路线</strong><span>纯 AI 仿真人 / AI+实拍</span></div>
+      </div>
+    </header>
+
+    <section id="works">
+      <div class="wrap">
+        <div class="section-head">
+          <div><span class="section-label">SELECTED WORKS</span><h2>精选代表作</h2></div>
+          <p>以正式作品封面呈现代表项目。点击任意封面，可放大查看。</p>
+        </div>
+        <div class="marquee-shell">
+          <div class="marquee-viewport" id="worksMarquee" aria-label="精选代表作封面跑马灯，可按住拖动">
+            <div class="marquee-track" id="worksTrack">
+              <div class="marquee-set" id="worksSet">
+                <button class="still" type="button" data-src="assets/img-01.png" data-label="Lucifer the Seraph" aria-label="放大查看 Lucifer the Seraph 封面"><img src="assets/img-01.png" alt="Lucifer the Seraph 正式作品封面" loading="lazy" draggable="false"><span class="still-label">Lucifer the Seraph</span></button>
+                <button class="still" type="button" data-src="assets/img-02.jpeg" data-label="Sold by My Husband" aria-label="放大查看 Sold by My Husband 封面"><img src="assets/img-02.jpeg" alt="Sold by My Husband 正式作品封面" loading="lazy" draggable="false"><span class="still-label">Sold by My Husband</span></button>
+                <button class="still" type="button" data-src="assets/img-03.jpeg" data-label="赘婿：隐龙之父" aria-label="放大查看《赘婿：隐龙之父》封面"><img src="assets/img-03.jpeg" alt="《赘婿：隐龙之父》正式作品封面" loading="lazy" draggable="false"><span class="still-label">赘婿：隐龙之父</span></button>
+                <button class="still" type="button" data-src="assets/img-04.jpeg" data-label="丢失的豆奶" aria-label="放大查看《丢失的豆奶》封面"><img src="assets/img-04.jpeg" alt="《丢失的豆奶》正式作品封面" loading="lazy" draggable="false"><span class="still-label">丢失的豆奶</span></button>
+                <button class="still" type="button" data-src="assets/img-05.jpeg" data-label="Moonlight's Wildfire Love" aria-label="放大查看 Moonlight's Wildfire Love 封面"><img src="assets/img-05.jpeg" alt="Moonlight's Wildfire Love 正式作品封面" loading="lazy" draggable="false"><span class="still-label">Moonlight's Wildfire Love</span></button>
+                <button class="still" type="button" data-src="assets/img-06.jpeg" data-label="昆仑隐龙" aria-label="放大查看《昆仑隐龙》封面"><img src="assets/img-06.jpeg" alt="《昆仑隐龙》正式作品封面" loading="lazy" draggable="false"><span class="still-label">昆仑隐龙</span></button>
+                <button class="still" type="button" data-src="assets/img-07.jpeg" data-label="Mafia Heir's Prize Fighter" aria-label="放大查看 Mafia Heir's Prize Fighter 封面"><img src="assets/img-07.jpeg" alt="Mafia Heir's Prize Fighter 正式作品封面" loading="lazy" draggable="false"><span class="still-label">Mafia Heir's Prize Fighter</span></button>
+              </div>
+              <div class="marquee-set" aria-hidden="true">
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-01.png" data-label="Lucifer the Seraph"><img src="assets/img-01.png" alt="" loading="lazy" draggable="false"><span class="still-label">Lucifer the Seraph</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-02.jpeg" data-label="Sold by My Husband"><img src="assets/img-02.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">Sold by My Husband</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-03.jpeg" data-label="赘婿：隐龙之父"><img src="assets/img-03.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">赘婿：隐龙之父</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-04.jpeg" data-label="丢失的豆奶"><img src="assets/img-04.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">丢失的豆奶</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-05.jpeg" data-label="Moonlight's Wildfire Love"><img src="assets/img-05.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">Moonlight's Wildfire Love</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-06.jpeg" data-label="昆仑隐龙"><img src="assets/img-06.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">昆仑隐龙</span></button>
+                <button class="still" type="button" tabindex="-1" data-src="assets/img-07.jpeg" data-label="Mafia Heir's Prize Fighter"><img src="assets/img-07.jpeg" alt="" loading="lazy" draggable="false"><span class="still-label">Mafia Heir's Prize Fighter</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="videos">
+      <div class="wrap">
+        <div class="section-head">
+          <div><span class="section-label">SELECTED VIDEO</span><h2>精选视频</h2></div>
+          <p>一键播放代表作正片片段</p>
+        </div>
+        <div class="video-list">
+          <button class="video-card" id="jinglingVideoCard" type="button" aria-haspopup="dialog" aria-controls="videoLightbox" aria-label="播放《精灵小样》">
+            <span class="video-play" aria-hidden="true"></span>
+            <span class="video-card-copy"><strong>精灵小样</strong><span>奇幻题材 AI 短剧小样 · 约 1 分 37 秒</span></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="library">
+      <div class="wrap">
+        <div class="library-callout">
+          <div><span class="section-label">FULL LIBRARY</span><h2>完整作品库</h2><p>更多作品陆续上传</p></div>
+          <button class="button" type="button" disabled>敬请期待</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflow">
+      <div class="wrap">
+        <div class="section-head">
+          <div><span class="section-label">AI PRODUCTION SYSTEM</span><h2>AI 创作工作流</h2></div>
+          <p>从导演预演、视觉开发到仿真人成片与实拍融合，形成可执行的创作路径。</p>
+        </div>
+        <div class="workflow-grid">
+          <article class="workflow-card"><span class="mark">M</span><h3>Muse AI 工作流</h3><p>导演台预演运镜 / 3D 模型建场景保一致性 / 摄像机运镜设计 / 白模参考视频</p></article>
+          <article class="workflow-card"><span class="mark">G</span><h3>GPT 出图</h3><p>海报与概念图</p></article>
+          <article class="workflow-card"><span class="mark">AI</span><h3>纯 AI 仿真人短剧</h3><p>海外 + 国内双线</p></article>
+          <article class="workflow-card"><span class="mark">+</span><h3>AI + 实拍融合短剧</h3><p>将 AI 视觉能力与实拍制作路径融合。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="case">
+      <div class="wrap case-layout">
+        <div class="case-summary">
+          <span class="section-label">PROJECT BREAKDOWN</span>
+          <p class="case-number">200万</p>
+          <h2>TikTok 爆款案例</h2>
+          <div class="case-link"><a class="button" href="https://www.tiktok.com/@snackshort_drama/video/7661955591471910165?is_from_webapp=1&amp;sender_device=pc" target="_blank" rel="noopener noreferrer">查看公开案例 ↗</a></div>
+        </div>
+        <div class="steps" aria-label="案例制作步骤">
+          <article class="step"><span class="step-index">01</span><div><h3>导演台预演运镜</h3><p>先确定镜头调度与画面节奏。</p></div></article>
+          <article class="step"><span class="step-index">02</span><div><h3>3D 建模保场景一致</h3><p>以场景模型稳定空间关系与视觉连续性。</p></div></article>
+          <article class="step"><span class="step-index">03</span><div><h3>AI 生成仿真人成片</h3><p>将预演与场景依据转化为最终画面。</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap about-grid">
+        <div class="portrait-type" aria-label="黄经亚（Huang Jingya）文字肖像">
+          <strong>黄<br>经亚</strong>
+          <em>Huang Jingya · AI filmmaker</em>
+        </div>
+        <div class="about-copy">
+          <span class="section-label">PROFILE</span>
+          <h2>黄经亚</h2>
+          <p class="profile-name-en">Huang Jingya</p>
+          <p>他专注于 AI 短剧制作，在纯 AI 仿真人与 AI+实拍两条路径中推进视觉开发与成片制作。</p>
+          <ul class="bio-list">
+            <li>英语老师教学经验</li>
+            <li>Apple 官方认证教师</li>
+            <li>参与 Apple 中国区新生代讲师项目</li>
+            <li>语言能力 <strong>MAX</strong></li>
+          </ul>
+          <p class="salary">期望月薪 1.4–1.5万</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <div><span class="section-label">WORK TOGETHER</span><h2>求职、项目合作与创作邀约</h2></div>
+        <div class="contact-card">
+          <p>联系邮箱</p>
+          <div class="email">huangjingya917@qq.com</div>
+          <div class="contact-actions">
+            <a class="button" href="mailto:huangjingya917@qq.com">发送邮件</a>
+            <button class="button secondary" id="copyEmail" type="button">复制邮箱</button>
+          </div>
+          <div class="copy-status" id="copyStatus" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>黄经亚 · HUANG JINGYA · AI FILMMAKER</footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="作品大图预览" aria-hidden="true">
+    <span class="lightbox-label" id="lightboxLabel"></span>
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭预览">×</button>
+    <img id="lightboxImage" src="assets/img-02.jpeg" alt="放大的作品画面">
+  </div>
+
+  <div class="video-lightbox" id="videoLightbox" role="dialog" aria-modal="true" aria-labelledby="videoLightboxLabel" aria-hidden="true">
+    <button class="video-lightbox-close" id="videoLightboxClose" type="button" aria-label="关闭视频播放器">×</button>
+    <div class="video-player-shell">
+      <p class="video-lightbox-label" id="videoLightboxLabel">精灵小样</p>
+      <video id="jinglingVideo" controls playsinline preload="metadata">
+        <source src="https://17698256917-blip.github.io/huangjingya-portfolio/videos/jingling-preview.mp4" type="video/mp4">
+        你的浏览器暂不支持视频播放。
+      </video>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var lightbox = document.getElementById('lightbox');
+      var lightboxImage = document.getElementById('lightboxImage');
+      var lightboxLabel = document.getElementById('lightboxLabel');
+      var closeButton = document.getElementById('lightboxClose');
+      var lastTrigger = null;
+      var videoCard = document.getElementById('jinglingVideoCard');
+      var videoLightbox = document.getElementById('videoLightbox');
+      var videoCloseButton = document.getElementById('videoLightboxClose');
+      var jinglingVideo = document.getElementById('jinglingVideo');
+
+      function openLightbox(button) {
+        lastTrigger = button;
+        lightboxImage.src = button.getAttribute('data-src');
+        lightboxLabel.textContent = button.getAttribute('data-label');
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        closeButton.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastTrigger) lastTrigger.focus();
+      }
+
+      function openVideoLightbox() {
+        videoLightbox.classList.add('open');
+        videoLightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        videoCloseButton.focus();
+        var playPromise = jinglingVideo.play();
+        if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(function () {});
+      }
+
+      function closeVideoLightbox() {
+        jinglingVideo.pause();
+        videoLightbox.classList.remove('open');
+        videoLightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        videoCard.focus();
+      }
+
+      var marquee = document.getElementById('worksMarquee');
+      var marqueeTrack = document.getElementById('worksTrack');
+      var marqueeSet = document.getElementById('worksSet');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var setWidth = 1;
+      var dragging = false;
+      var dragStartX = 0;
+      var dragStartScroll = 0;
+      var dragMoved = false;
+      var suppressClickUntil = 0;
+      var lastFrame = performance.now();
+      var marqueeVisible = true;
+
+      function measureMarquee() {
+        setWidth = marqueeSet.getBoundingClientRect().width || 1;
+      }
+
+      function normalizeScroll() {
+        if (marquee.scrollLeft >= setWidth) marquee.scrollLeft -= setWidth;
+        if (marquee.scrollLeft < 0) marquee.scrollLeft += setWidth;
+      }
+
+      function animateMarquee(now) {
+        var elapsed = Math.min(now - lastFrame, 50);
+        lastFrame = now;
+        if (!dragging && !reduceMotion && marqueeVisible && !document.hidden) {
+          marquee.scrollLeft += elapsed * 0.05;
+          normalizeScroll();
+        }
+        window.requestAnimationFrame(animateMarquee);
+      }
+
+      marquee.addEventListener('pointerdown', function (event) {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        dragging = true;
+        dragMoved = false;
+        dragStartX = event.clientX;
+        dragStartScroll = marquee.scrollLeft;
+        marquee.classList.add('dragging');
+        marquee.setPointerCapture(event.pointerId);
+      });
+
+      marquee.addEventListener('pointermove', function (event) {
+        if (!dragging) return;
+        var movement = event.clientX - dragStartX;
+        if (Math.abs(movement) > 5) dragMoved = true;
+        marquee.scrollLeft = dragStartScroll - movement;
+        normalizeScroll();
+        if (dragMoved) event.preventDefault();
+      });
+
+      function finishDrag(event) {
+        if (!dragging) return;
+        dragging = false;
+        marquee.classList.remove('dragging');
+        if (dragMoved) suppressClickUntil = Date.now() + 300;
+        if (marquee.hasPointerCapture(event.pointerId)) marquee.releasePointerCapture(event.pointerId);
+      }
+
+      marquee.addEventListener('pointerup', finishDrag);
+      marquee.addEventListener('pointercancel', finishDrag);
+      marquee.addEventListener('lostpointercapture', function () {
+        dragging = false;
+        marquee.classList.remove('dragging');
+      });
+      window.addEventListener('resize', function () {
+        measureMarquee();
+        normalizeScroll();
+      });
+      document.addEventListener('visibilitychange', function () {
+        lastFrame = performance.now();
+      });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          marqueeVisible = entries[0].isIntersecting;
+          lastFrame = performance.now();
+        }, { rootMargin: '120px 0px' }).observe(marquee);
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll('.still'), function (button) {
+        button.addEventListener('click', function (event) {
+          if (event.detail > 0 && Date.now() < suppressClickUntil) {
+            event.preventDefault();
+            return;
+          }
+          openLightbox(button);
+        });
+      });
+      measureMarquee();
+      window.requestAnimationFrame(animateMarquee);
+
+      closeButton.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', function (event) {
+        if (event.target === lightbox) closeLightbox();
+      });
+      videoCard.addEventListener('click', openVideoLightbox);
+      videoCloseButton.addEventListener('click', closeVideoLightbox);
+      videoLightbox.addEventListener('click', function (event) {
+        if (event.target === videoLightbox) closeVideoLightbox();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') return;
+        if (videoLightbox.classList.contains('open')) closeVideoLightbox();
+        else if (lightbox.classList.contains('open')) closeLightbox();
+      });
+
+      var copyButton = document.getElementById('copyEmail');
+      var copyStatus = document.getElementById('copyStatus');
+      var email = 'huangjingya917@qq.com';
+      copyButton.addEventListener('click', function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email).then(function () {
+            copyStatus.textContent = '邮箱已复制';
+            window.setTimeout(function () { copyStatus.textContent = ''; }, 2200);
+          }).catch(function () { copyStatus.textContent = '请长按上方邮箱复制'; });
+        } else {
+          copyStatus.textContent = '请长按上方邮箱复制';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
